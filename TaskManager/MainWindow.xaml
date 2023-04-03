@@ -17,10 +17,11 @@
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name Process" Width="*" Binding="{Binding Name}"/>
-                <DataGridTextColumn Header="Used CPU" Width="*" Binding="{Binding CPU}"/>
-                <DataGridTextColumn Header="Used Memory" Width="*" Binding="{Binding Memory}"/>
-                <DataGridTextColumn Header="Used Network" Width="*" Binding="{Binding Network}"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding Path=ID}" Visibility="Hidden"/>
+                <DataGridTextColumn Header="Name Process" Width="*" Binding="{Binding Path=Name}"/>
+                <DataGridTextColumn Header="Used CPU" Width="*" Binding="{Binding Path=CPU}"/>
+                <DataGridTextColumn Header="Used Memory" Width="*" Binding="{Binding Path=Memory}"/>
+                <DataGridTextColumn Header="Used Network" Width="*" Binding="{Binding Path=Network}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

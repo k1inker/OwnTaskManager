@@ -33,6 +33,7 @@ namespace TaskManager
             {
                 gridPocess.Items.Add(new
                 {
+                    ID = item.ProcessId,
                     Name = item.ProcessName,
                     CPU = item.ProcessUsedCPU,
                     Memory = item.ProcessMemoryUsed,
@@ -46,6 +47,10 @@ namespace TaskManager
             //_timer.Start();
         }
         private void UpdateProcesses(object sender, EventArgs e)
+        {
+            UpdateListProcesses();
+        }
+        private void UpdateListProcesses()
         {
             gridPocess.Items.Clear();
             foreach (var item in _processManager.GetProcessList())
@@ -78,6 +83,11 @@ namespace TaskManager
                 menuItem2.Click += MenuItem2_Click;
                 contextMenu.Items.Add(menuItem2);
 
+                MenuItem menuItem3 = new MenuItem();
+                menuItem3.Header = "Відкрити розташування файлу";
+                menuItem3.Click += MenuItem3_Click;
+                contextMenu.Items.Add(menuItem3);
+
                 // Відобразити контекстне меню
                 row.ContextMenu = contextMenu;
             }
@@ -89,19 +99,41 @@ namespace TaskManager
                 if (gridPocess.SelectedItems[0] != null)
                 {
                     dynamic selectedItem = gridPocess.SelectedItems[0];
-                    Console.WriteLine(1);
-                    ProcessItem processToKill = _processManager.ProcessList.Processes.FirstOrDefault((x) => x.ProcessName == selectedItem.Name);
-                    Console.WriteLine(selectedItem.Name);
-                    if (processToKill == null)
-                        Console.WriteLine("null");
+                    ProcessItem processToKill = _processManager.ProcessList.Processes.FirstOrDefault((x) => x.ProcessId == selectedItem.ID);
                     _processManager.ProcessList.KillProcess(processToKill);
+                    
+                    UpdateListProcesses();
                 }
             }
             catch (Exception) { }
         }
         private void MenuItem2_Click(object sender, RoutedEventArgs e)
         {
-            // Код для завершення дерева процесів
+            try
+            {
+                if (gridPocess.SelectedItems[0] != null)
+                {
+                    dynamic selectedItem = gridPocess.SelectedItems[0];
+                    ProcessItem processToKill = _processManager.ProcessList.Processes.FirstOrDefault((x) => x.ProcessId == selectedItem.ID);
+                    _processManager.ProcessList.KillTreeProcesses(_processManager.ProcessList.GetParentProcessId(processToKill));
+                    
+                    UpdateListProcesses();
+                }
+            }
+            catch (Exception) { }
+        }
+        private void MenuItem3_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (gridPocess.SelectedItems[0] != null)
+                {
+                    dynamic selectedItem = gridPocess.SelectedItems[0];
+                    ProcessItem processToOpen = _processManager.ProcessList.Processes.FirstOrDefault((x) => x.ProcessId == selectedItem.ID);
+                    processToOpen.OpenFileLocation();
+                }
+            }
+            catch (Exception) { }
         }
     }
 }

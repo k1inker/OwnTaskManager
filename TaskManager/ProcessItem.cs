@@ -1,5 +1,7 @@
-﻿using System;
+﻿using System.IO;
 using System.Diagnostics;
+using System;
+
 namespace TaskManager
 {
     internal class ProcessItem
@@ -29,7 +31,16 @@ namespace TaskManager
             _networkPerformanceCounter.NextValue();
             _cpuPerformanceCounter.NextValue();
         }
+        public void OpenFileLocation()
+        {
+            string processFilePath = _process.MainModule.FileName;
+            Console.WriteLine(processFilePath);
+            string processFolder = Path.GetDirectoryName(processFilePath);
+            Console.WriteLine(processFolder);
+            _process.StartInfo.Arguments = "/select," + processFolder;
 
+            _process.Start();
+        }
         public void TerminateProcess()
         {
             _process.Kill();

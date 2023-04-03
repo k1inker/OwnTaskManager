@@ -23,7 +23,7 @@ namespace TaskManager
                 Thread thread = new Thread(() =>
                 {
                     ProcessItem processItem = new ProcessItem(process);
-                    processItems.Add(processItem);
+                    _processes.Add(processItem);
                 });
                 thread.Start();
                 threads.Add(thread);
@@ -33,8 +33,7 @@ namespace TaskManager
             {
                 thread.Join();
             }
-
-            return processItems;
+            return _processes;
             //_processes.Clear();
 
             //foreach (Process process in Process.GetProcesses())
@@ -43,13 +42,13 @@ namespace TaskManager
             //}
             //return _processes;
         }
-        private int GetParentProcessId(Process p)
+        public int GetParentProcessId(ProcessItem p)
         {
             int parentId = 0;
 
             try
             {
-                ManagementObject managementObject = new ManagementObject("win32_process.handle='" + p.Id + "'");
+                ManagementObject managementObject = new ManagementObject("win32_process.handle='" + p.ProcessId + "'");
 
                 managementObject.Get();
 
@@ -76,8 +75,8 @@ namespace TaskManager
             }
             try
             {
-                //var proc = 
-                //KillProcess();
+                ProcessItem proc = Processes.First((x) => x.ProcessId == idProcess);
+                KillProcess(proc);
             }
             catch (ArgumentException) { }
         }
@@ -85,7 +84,6 @@ namespace TaskManager
         {
             if(process != null)
             {
-                Console.WriteLine(1);
                 _processes.Remove(process);
                 process.TerminateProcess();
             }
