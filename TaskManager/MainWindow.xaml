@@ -1,0 +1,27 @@
+﻿<Window x:Class="TaskManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskManager"
+        mc:Ignorable="d"
+        Title="Task Manager" Height="450" Width="800">
+    <Grid>
+        <DataGrid x:Name="gridPocess"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="GridRow_PreviewMouseRightButtonDown" />
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name Process" Width="*" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Used CPU" Width="*" Binding="{Binding CPU}"/>
+                <DataGridTextColumn Header="Used Memory" Width="*" Binding="{Binding Memory}"/>
+                <DataGridTextColumn Header="Used Network" Width="*" Binding="{Binding Network}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
