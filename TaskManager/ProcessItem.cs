@@ -6,14 +6,16 @@ namespace TaskManager
 {
     internal class ProcessItem
     {
-        private int _processId;
         public int ProcessId { get { return _processId; } }
-        private string _processName;
+        private int _processId;
         public string ProcessName { get { return _processName; } }
-        private double _processMemoryUsed;
+        private string _processName;
         public double ProcessMemoryUsed { get { return _processMemoryUsed; } }
-        public float ProcessUsedCPU { get { return _cpuPerformanceCounter.NextValue(); } }
-        public float ProcessNetworkUsed { get { return _networkPerformanceCounter.NextValue() * 0.000008f; } }
+        private double _processMemoryUsed;
+        public float ProcessUsedCPU { get{ return _processUsedCPU; } }
+        private float _processUsedCPU;
+        public float ProcessNetworkUsed { get { return _processNetworkUsed; } }
+        private float _processNetworkUsed;
 
         private Process _process;
         private PerformanceCounter _networkPerformanceCounter;
@@ -27,9 +29,28 @@ namespace TaskManager
 
             _networkPerformanceCounter = new PerformanceCounter("Process", "IO Data Bytes/sec", _processName);
             _cpuPerformanceCounter = new PerformanceCounter("Process", "% Processor Time", _processName);
-
             _networkPerformanceCounter.NextValue();
             _cpuPerformanceCounter.NextValue();
+        }
+        public void UpdateProcessUsedCPU()
+        {
+            if(_cpuPerformanceCounter != null)
+                _processUsedCPU = _cpuPerformanceCounter.NextValue();
+            else
+                _processUsedCPU = 0;
+        }
+        public void UpdateNetworkUsed()
+        {
+            if (_cpuPerformanceCounter != null)
+                _processNetworkUsed = _networkPerformanceCounter.NextValue() * 0.000008f;
+            else
+                _processNetworkUsed = 0;
+        }
+        public void UpdateInfo()
+        {
+            _processMemoryUsed = (double)_process.WorkingSet64 / (1000 * 1000);
+            UpdateProcessUsedCPU();
+            UpdateNetworkUsed();
         }
         public void OpenFileLocation()
         {

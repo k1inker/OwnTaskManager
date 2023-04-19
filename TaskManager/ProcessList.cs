@@ -1,46 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace TaskManager
 {
     internal class ProcessList
     {
-        private List<ProcessItem> _processes = new List<ProcessItem>();
-        public List<ProcessItem> Processes { get { return _processes; } }
-        public List<ProcessItem> GetNewListProcesses()
+        public List<ProcessItem> CurrentProcesses { get { return _currentProcesses; } }
+        private List<ProcessItem> _currentProcesses = new List<ProcessItem>();
+
+        public List<ProcessItem> NewProcesses{ get { return _newProcesses; } }
+        private List<ProcessItem> _newProcesses = new List<ProcessItem>();
+
+        public List<int> FinishedIdProcesses{ get { return _finishedIdProcesses; } }
+        private List<int> _finishedIdProcesses = new List<int>();
+
+        public void UpdateListProcesses()
         {
-            var processes = Process.GetProcesses();
-            var threads = new List<Thread>();
-            var processItems = new List<ProcessItem>();
+            _newProcesses.Clear();
+            _finishedIdProcesses.Clear();
 
-            foreach (Process process in processes)
+            var currentIds = _currentProcesses.Select(p => p.ProcessId).ToList();
+
+            foreach (var p in Process.GetProcesses())
             {
-                Thread thread = new Thread(() =>
+                if (!currentIds.Remove(p.Id)) // it's a new process id
                 {
-                    ProcessItem processItem = new ProcessItem(process);
-                    _processes.Add(processItem);
-                });
-                thread.Start();
-                threads.Add(thread);
+                    ProcessItem newProcces = new ProcessItem(p);
+                    _newProcesses.Add(newProcces);
+                    _currentProcesses.Add(newProcces);
+                }
             }
 
-            foreach (Thread thread in threads)
+            foreach (var id in currentIds) // these do not exist any more
             {
-                thread.Join();
-            }
-            return _processes;
-            //_processes.Clear();
+                var process = _currentProcesses.First(p => p.ProcessId == id);
 
-            //foreach (Process process in Process.GetProcesses())
-            //{
-            //    _processes.Add(new ProcessItem(process));
-            //}
-            //return _processes;
+                _finishedIdProcesses.Add(process.ProcessId);
+                _currentProcesses.Remove(process);
+            }
+        }
+        public void UpdateInfoProcesses()
+        {
+            foreach(var process in _currentProcesses)
+            {
+                process.UpdateInfo();
+            }
         }
         public int GetParentProcessId(ProcessItem p)
         {
@@ -75,7 +83,7 @@ namespace TaskManager
             }
             try
             {
-                ProcessItem proc = Processes.First((x) => x.ProcessId == idProcess);
+                ProcessItem proc = CurrentProcesses.First((x) => x.ProcessId == idProcess);
                 KillProcess(proc);
             }
             catch (ArgumentException) { }
@@ -84,7 +92,6 @@ namespace TaskManager
         {
             if(process != null)
             {
-                _processes.Remove(process);
                 process.TerminateProcess();
             }
         }

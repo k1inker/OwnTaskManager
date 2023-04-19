@@ -8,12 +8,13 @@
         Title="Task Manager" Height="450" Width="800">
     <Grid>
         <DataGrid x:Name="gridPocess"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  SelectionMode="Single">
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single">
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
-                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="GridRow_PreviewMouseRightButtonDown" />
+                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="GridRowMouseRightButtonDown" />
+                    <EventSetter Event="PreviewMouseDoubleClick" Handler="GridRowMouseDoubleButtonDown" />
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
