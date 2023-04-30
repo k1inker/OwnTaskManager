@@ -4,26 +4,68 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TaskManager"
+        xmlns:wf="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
         mc:Ignorable="d"
-        Title="Task Manager" Height="450" Width="800">
+        Title="Task Manager" Height="800" Width="1400">
     <Grid>
-        <DataGrid x:Name="gridPocess"
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition x:Name="rightPanel" Width="0" />
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <DataGrid x:Name="gridPocess"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
-                      SelectionMode="Single">
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="GridRowMouseRightButtonDown" />
-                    <EventSetter Event="PreviewMouseDoubleClick" Handler="GridRowMouseDoubleButtonDown" />
-                </Style>
-            </DataGrid.RowStyle>
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Path=ID}" Visibility="Hidden"/>
-                <DataGridTextColumn Header="Name Process" Width="*" Binding="{Binding Path=Name}"/>
-                <DataGridTextColumn Header="Used CPU" Width="*" Binding="{Binding Path=CPU}"/>
-                <DataGridTextColumn Header="Used Memory" Width="*" Binding="{Binding Path=Memory}"/>
-                <DataGridTextColumn Header="Used Network" Width="*" Binding="{Binding Path=Network}"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                      SelectionMode="Single"
+                      FontSize="20">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <EventSetter Event="PreviewMouseRightButtonDown" Handler="GridRowMouseRightButtonDown" />
+                        <EventSetter Event="PreviewMouseDoubleClick" Handler="GridRowMouseDoubleButtonDown" />
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Path=ID}" Visibility="Hidden"/>
+                    <DataGridTextColumn Header="Name Process" Width="*" Binding="{Binding Path=Name}"/>
+                    <DataGridTextColumn Header="Used CPU (%)" Width="*" Binding="{Binding Path=CPU}"/>
+                    <DataGridTextColumn Header="Used Memory MB" Width="*" Binding="{Binding Path=Memory}"/>
+                    <DataGridTextColumn Header="Used Network Mb" Width="*" Binding="{Binding Path=Network}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Menu Grid.Row="0" HorizontalAlignment="Stretch" FontSize="20">
+                <MenuItem Header="HideGraph" Click="MenuItemHideGraph"/>
+                <MenuItem Name="CPUMenuItem" Header="CPU Usage" Click="MenuItemMetric_Click"/>
+                <MenuItem Name="memoryMenuItem" Header="Memory Usage" Click="MenuItemMetric_Click" IsEnabled="False"/>
+                <MenuItem Name="networkMenuItem" Header="Network Usage" Click="MenuItemMetric_Click"/>
+            </Menu>
+            <WindowsFormsHost Grid.Row="1">
+                <wf:Chart x:Name="chart">
+                    <wf:Chart.Series>
+                        <wf:Series ChartType="Area" BorderColor="Blue" BorderWidth="2" BackSecondaryColor="Transparent" BackGradientStyle="TopBottom">
+                        </wf:Series>
+                    </wf:Chart.Series>
+                    <wf:Chart.ChartAreas>
+                        <wf:ChartArea>
+                            <wf:ChartArea.AxisX>
+                                <wf:Axis Interval="1" Maximum="21" Minimum="1" />
+                            </wf:ChartArea.AxisX>
+                            <wf:ChartArea.AxisY>
+                                <wf:Axis Title="" Minimum="0" TitleFont="20"/>
+                            </wf:ChartArea.AxisY>
+                        </wf:ChartArea>
+                    </wf:Chart.ChartAreas>
+                    <wf:Chart.Titles>
+                        <wf:Title Text="My Chart Title" Font="Arial, 20" Docking="Top" />
+                    </wf:Chart.Titles>
+                </wf:Chart>
+            </WindowsFormsHost>
+        </Grid>
     </Grid>
 </Window>

@@ -1,7 +1,6 @@
-﻿using System.IO;
+﻿using Shell32;
+using System.IO;
 using System.Diagnostics;
-using System;
-
 namespace TaskManager
 {
     internal class ProcessItem
@@ -29,8 +28,11 @@ namespace TaskManager
 
             _networkPerformanceCounter = new PerformanceCounter("Process", "IO Data Bytes/sec", _processName);
             _cpuPerformanceCounter = new PerformanceCounter("Process", "% Processor Time", _processName);
-            _networkPerformanceCounter.NextValue();
-            _cpuPerformanceCounter.NextValue();
+
+            if(PerformanceCounterCategory.Exists("IO Data Bytes/sec"))
+                _networkPerformanceCounter.NextValue();
+            if (PerformanceCounterCategory.Exists("% Processor Time"))
+                _cpuPerformanceCounter.NextValue();
         }
         public void UpdateProcessUsedCPU()
         {
@@ -55,12 +57,23 @@ namespace TaskManager
         public void OpenFileLocation()
         {
             string processFilePath = _process.MainModule.FileName;
-            Console.WriteLine(processFilePath);
-            string processFolder = Path.GetDirectoryName(processFilePath);
-            Console.WriteLine(processFolder);
-            _process.StartInfo.Arguments = "/select," + processFolder;
+            ProcessStartInfo startInfo = new ProcessStartInfo("explorer.exe", $"/select,\"{processFilePath}\"");
+            Process.Start(startInfo);
+        }
+        public void OpenPropertiesProcess()
+        {
+            string filePath = _process.MainModule.FileName;
+            // Отримати об'єкт Shell
+            var shell = new Shell();
 
-            _process.Start();
+            //// Отримати об'єкт папки файлу
+            var folder = shell.NameSpace(Path.GetDirectoryName(filePath));
+
+            // Отримати об'єкт файлу
+            var file = folder.ParseName(Path.GetFileName(filePath));
+
+            // Відкрити властивості файлу
+            file.InvokeVerb("properties");
         }
         public void TerminateProcess()
         {

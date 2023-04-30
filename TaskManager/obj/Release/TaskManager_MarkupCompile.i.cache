@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\penze\source\repos\TaskManager\OwnTaskManager\TaskManager\obj\Debug\
+C:\Users\penze\source\repos\TaskManager\OwnTaskManager\TaskManager\obj\Release\
 TaskManager
 none
 false
-DEBUG;TRACE
+TRACE
 C:\Users\penze\source\repos\TaskManager\OwnTaskManager\TaskManager\App.xaml
 1219584333
 
-9-167287655
+10-729430238
 28-1074677569
 MainWindow.xaml;
 
-False
+True
 
